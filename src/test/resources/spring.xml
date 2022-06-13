@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <bean id="person" class="com.july.minispring.test.bean.Person">
+        <property name="name" value="derek"/>
+        <property name="car" ref="car"/>
+    </bean>
+
+    <bean id="car" class="com.july.minispring.test.bean.Car">
+        <property name="brand" value="porsche"/>
+    </bean>
+
+    <bean class = "com.july.minispring.test.common.CustomBeanFactoryPostProcessor"/>
+
+    <bean class = "com.july.minispring.test.common.CustomerBeanPostProcessor"/>
+
+    <bean id="helloService" class="com.july.minispring.test.service.HelloService"/>
+</beans>
