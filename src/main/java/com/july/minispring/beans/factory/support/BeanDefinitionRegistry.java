@@ -7,6 +7,8 @@ import com.july.minispring.beans.factory.config.BeanDefinition;
 /**
  *  BeanDefinition注册表接口
  *  定义注册BeanDefinition的方法
+ *
+ *  @author July
  */
 public interface BeanDefinitionRegistry {
 
@@ -32,4 +34,11 @@ public interface BeanDefinitionRegistry {
      * @return
      */
     boolean containsBeanDefinition(String beanName);
+
+    /**
+     * 获取所有已注册的BeanDefinition的名称
+     *
+     * @return
+     */
+    String[] getBeanDefinitionNames();
 }

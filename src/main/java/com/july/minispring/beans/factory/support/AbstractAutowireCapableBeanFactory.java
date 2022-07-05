@@ -2,7 +2,9 @@ package com.july.minispring.beans.factory.support;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.reflect.MethodHandleUtil;
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.TypeUtil;
 import com.july.minispring.beans.BeansException;
@@ -13,7 +15,10 @@ import com.july.minispring.beans.factory.DisposableBean;
 import com.july.minispring.beans.factory.InitializingBean;
 import com.july.minispring.beans.factory.ObjectFactory;
 import com.july.minispring.beans.factory.config.*;
+import com.july.minispring.context.annotation.BeanMethod;
+import com.july.minispring.context.annotation.ConfigurationClass;
 import com.july.minispring.core.convert.ConversionService;
+import sun.reflect.misc.MethodUtil;
 
 import java.lang.reflect.Method;
 
@@ -166,8 +171,25 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @param beanDefinition
      * @return
      */
-    protected Object createBeanInstance(BeanDefinition beanDefinition) {
+    protected Object createBeanInstance(BeanDefinition beanDefinition) throws Exception {
+        if (beanDefinition.getFactoryMethod() != null) {
+            return instantiateUsingFactoryMethod(beanDefinition);
+        }
         return getInstantiationStrategy().instantiate(beanDefinition);
+    }
+
+    /**
+     * BeanDefinition中FactoryMethod实例化bean
+     *
+     * @param beanDefinition
+     * @return
+     */
+    protected Object instantiateUsingFactoryMethod(BeanDefinition beanDefinition) throws Exception {
+        BeanMethod beanMethod = beanDefinition.getFactoryMethod();
+        ConfigurationClass configClass = beanMethod.getConfigurationClass();
+        Method method = beanMethod.getMetadata().getIntrospectedMethod();
+        //TODO 实现带实参的bean注解方法
+        return method.invoke(configClass.getClazz().newInstance(), null);
     }
 
     /**

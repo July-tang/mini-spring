@@ -5,6 +5,8 @@ import com.july.minispring.beans.factory.ConfigurableListableBeanFactory;
 import com.july.minispring.beans.factory.config.BeanFactoryPostProcessor;
 import com.july.minispring.beans.factory.config.BeanPostProcessor;
 import com.july.minispring.beans.factory.config.ConfigurableBeanFactory;
+import com.july.minispring.beans.factory.support.BeanDefinitionRegistry;
+import com.july.minispring.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import com.july.minispring.context.ApplicationEvent;
 import com.july.minispring.context.ApplicationListener;
 import com.july.minispring.context.ConfigurableApplicationContext;
@@ -73,9 +75,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
      * @param beanFactory
      */
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+        //需先执行一次postProcessBeanDefinitionRegistry, 因其可以注册BeanDefinition，所以执行过程中可能新注册了BeanFactoryPostProcessor
+        Map<String, BeanDefinitionRegistryPostProcessor> BeanDefinitionRegistryPostProcessorMap = beanFactory.getBeansOfType(BeanDefinitionRegistryPostProcessor.class);
+        for (BeanDefinitionRegistryPostProcessor registryPostProcessor : BeanDefinitionRegistryPostProcessorMap.values()) {
+            registryPostProcessor.postProcessBeanDefinitionRegistry((BeanDefinitionRegistry) beanFactory);
+        }
         Map<String, BeanFactoryPostProcessor> beanFactoryPostProcessorMap = beanFactory.getBeansOfType(BeanFactoryPostProcessor.class);
         for (BeanFactoryPostProcessor beanFactoryPostProcessor : beanFactoryPostProcessorMap.values()) {
-            beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
+            if (beanFactoryPostProcessor instanceof BeanDefinitionRegistryPostProcessor) {
+                ((BeanDefinitionRegistryPostProcessor) beanFactoryPostProcessor).
+                        postProcessBeanDefinitionRegistry((BeanDefinitionRegistry) beanFactory);
+            } else {
+                beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
+            }
         }
     }
 

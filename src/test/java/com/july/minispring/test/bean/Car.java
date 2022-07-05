@@ -7,11 +7,10 @@ import java.time.LocalDate;
 
 @Component
 public class Car {
-
+    @Value("${price}")
     private int price;
-
+    @Value("${produceDate}")
     private LocalDate produceDate;
-
     @Value("${brand}")
     private String brand;
 
@@ -42,7 +41,9 @@ public class Car {
     @Override
     public String toString() {
         return "Car{" +
-                "brand='" + brand + '\'' +
+                "price=" + price +
+                ", produceDate=" + produceDate +
+                ", brand='" + brand + '\'' +
                 '}';
     }
 }

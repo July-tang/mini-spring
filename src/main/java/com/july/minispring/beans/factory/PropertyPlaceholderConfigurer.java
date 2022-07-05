@@ -21,7 +21,7 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
 
     public static final String PLACEHOLDER_SUFFIX = "}";
 
-    private String location;
+    private String[] locations;
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
@@ -40,15 +40,19 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
      * @return
      */
     private Properties loadProperties() {
-        try {
-            DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
-            Resource resource = resourceLoader.getResource(location);
-            Properties properties = new Properties();
-            properties.load(resource.getInputStream());
-            return properties;
-        } catch (IOException e) {
-            throw new BeansException("Could not load properties", e);
+        Properties totalProperties = new Properties();
+        Properties properties = new Properties();
+        for (String location : locations) {
+            try {
+                DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+                Resource resource = resourceLoader.getResource(location);
+                properties.load(resource.getInputStream());
+                totalProperties.putAll(properties);
+            } catch (IOException e) {
+                throw new BeansException("Could not load properties", e);
+            }
         }
+        return totalProperties;
     }
 
     /**
@@ -97,8 +101,8 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
         return buf.toString();
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocations(String[] locations) {
+        this.locations = locations;
     }
 
     private class PlaceholderResolvingStringValueResolver implements StringValueResolver {

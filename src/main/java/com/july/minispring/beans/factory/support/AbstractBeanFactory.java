@@ -39,7 +39,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     }
 
     /**
-     * 如果是FactoryBean，从FactoryBean#getObject中创建bean
+     * 如果是FactoryBean，从FactoryBean#getObject中创建bean,否则直接返回
      *
      * @param beanInstance
      * @param beanName
