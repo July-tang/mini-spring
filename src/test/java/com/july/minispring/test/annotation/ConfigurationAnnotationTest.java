@@ -19,8 +19,7 @@ public class ConfigurationAnnotationTest {
 
     @Test
     public void testConfiguration() {
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfig.class,
-                ComponentTestConfig.class);
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfig.class);
 
         A a = applicationContext.getBean("testA", A.class);
         B b = applicationContext.getBean("b", B.class);

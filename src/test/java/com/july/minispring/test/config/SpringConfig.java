@@ -2,6 +2,7 @@ package com.july.minispring.test.config;
 
 import com.july.minispring.context.annotation.Bean;
 import com.july.minispring.context.annotation.Configuration;
+import com.july.minispring.context.annotation.Import;
 import com.july.minispring.test.bean.A;
 import com.july.minispring.test.bean.B;
 
@@ -10,6 +11,7 @@ import com.july.minispring.test.bean.B;
  */
 
 @Configuration
+@Import(ComponentTestConfig.class)
 public class SpringConfig {
 
     @Bean

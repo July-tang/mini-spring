@@ -31,13 +31,14 @@ class ConfigurationClassParser {
 
     public void parse(Set<BeanDefinition> configCandidates) {
         for (BeanDefinition configDefinition : configCandidates) {
-            try {
-                doProcessConfigurationClass(new ConfigurationClass(configDefinition.getBeanClass(), configDefinition.getBeanClass().getSimpleName()));
-            } catch (Throwable e) {
-                throw new BeansException("Failed to parse configuration class ["
-                        + configDefinition.getBeanClass().getSimpleName() + "]", e);
-            }
+            processConfigurationClass(new ConfigurationClass(configDefinition.getBeanClass(), configDefinition.getBeanClass().getSimpleName()));
         }
+    }
+
+    private void processConfigurationClass(ConfigurationClass configClass) {
+        ConfigurationClass existingClass = this.configurationClasses.get(configClass);
+        if (existingClass != null) return;
+        doProcessConfigurationClass(configClass);
     }
 
     protected void doProcessConfigurationClass(ConfigurationClass configClass) {
@@ -51,12 +52,33 @@ class ConfigurationClassParser {
             componentScanParser.parse(basePackages);
         }
 
+        //处理@Import注解
+        processImports(configClass.getClazz());
+
         //处理@bean注解
         Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(configClass);
         for (MethodMetadata beanMethod : beanMethods) {
             configClass.addBeanMethod(beanMethod.getMethodName(), new BeanMethod(beanMethod, configClass));
         }
         this.configurationClasses.put(configClass, configClass);
+    }
+
+    /**
+     * 处理指定配置类的@Import注解
+     *
+     * @param clazz
+     */
+    private void processImports(Class<?> clazz) {
+        Import importAnnotation = clazz.getAnnotation(Import.class);
+        if (importAnnotation != null) {
+            Class<?>[] classes = importAnnotation.value();
+            for (Class<?> newClazz : classes) {
+                if (newClazz.getAnnotation(Configuration.class) != null) {
+                    ConfigurationClass configClass = new ConfigurationClass(newClazz, newClazz.getSimpleName());
+                    processConfigurationClass(configClass);
+                }
+            }
+        }
     }
 
     /**
