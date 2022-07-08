@@ -21,7 +21,12 @@ public class SpringConfig {
 
     //@Bean(name = "b")
     @Bean("b")
-    public B testB() {
-        return new B();
+    public B testB(A a) {
+        B b = new B();
+        testA();
+        b.setA(a);
+        return b;
     }
+
+
 }

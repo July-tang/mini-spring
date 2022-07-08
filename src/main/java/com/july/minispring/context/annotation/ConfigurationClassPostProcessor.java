@@ -1,5 +1,6 @@
 package com.july.minispring.context.annotation;
 
+import cn.hutool.core.util.ClassUtil;
 import com.july.minispring.beans.BeansException;
 import com.july.minispring.beans.factory.ConfigurableListableBeanFactory;
 import com.july.minispring.beans.factory.config.BeanDefinition;
@@ -16,6 +17,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
     @Nullable
     private ConfigurationClassBeanDefinitionReader reader;
+
+    private ClassLoader beanClassLoader = ClassUtil.getClassLoader();
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
@@ -46,6 +49,26 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        enhanceConfigurationClasses(beanFactory);
+    }
 
+    private void enhanceConfigurationClasses(ConfigurableListableBeanFactory beanFactory) {
+        Map<String, BeanDefinition> configBeanDefs = new LinkedHashMap<>();
+        for (String beanName : beanFactory.getBeanDefinitionNames()) {
+            BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
+            if (beanDef.isConfig()) {
+                configBeanDefs.put(beanName, beanDef);
+            }
+        }
+        if (configBeanDefs.isEmpty()) return;
+        ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer();
+        for (Map.Entry<String, BeanDefinition> entry : configBeanDefs.entrySet()) {
+            BeanDefinition beanDef = entry.getValue();
+            Class<?> configClass = beanDef.getBeanClass();
+            Class<?> enhancedClass = enhancer.enhance(configClass, this.beanClassLoader);
+            if (configClass != enhancedClass) {
+                beanDef.setBeanClass(enhancedClass);
+            }
+        }
     }
 }

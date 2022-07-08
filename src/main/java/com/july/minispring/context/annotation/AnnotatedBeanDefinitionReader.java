@@ -41,6 +41,9 @@ public class AnnotatedBeanDefinitionReader {
      */
     private void doRegisterBean(Class<?> beanClass) {
         BeanDefinition beanDefinition = new BeanDefinition(beanClass);
-        this.registry.registerBeanDefinition(beanClass.toGenericString(), beanDefinition);
+        if (beanClass.getAnnotation(Configuration.class) != null) {
+            beanDefinition.setConfig(true);
+        }
+        this.registry.registerBeanDefinition(beanClass.getName(), beanDefinition);
     }
 }

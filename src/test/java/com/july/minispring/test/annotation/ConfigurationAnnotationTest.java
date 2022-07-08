@@ -26,8 +26,7 @@ public class ConfigurationAnnotationTest {
         Car car = applicationContext.getBean("car", Car.class);
         Person person = applicationContext.getBean(Person.class);
         System.out.println(person);
-        assertThat(a != null).isTrue();
-        assertThat(b != null).isTrue();
+        assertThat(b.getA() == a).isTrue();
         assertThat(car == person.getCar()).isTrue();
     }
 }

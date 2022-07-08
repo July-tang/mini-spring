@@ -31,6 +31,8 @@ public class BeanDefinition {
 
     private boolean prototype = false;
 
+    private boolean isConfig = false;
+
     public void setScope(String scope) {
         this.scope = scope;
         this.singleton = SCOPE_SINGLETON.equals(scope);
@@ -71,6 +73,14 @@ public class BeanDefinition {
 
     public void setFactoryMethod(BeanMethod factoryMethod) {
         this.factoryMethod = factoryMethod;
+    }
+
+    public boolean isConfig() {
+        return isConfig;
+    }
+
+    public void setConfig(boolean config) {
+        isConfig = config;
     }
 
     public BeanDefinition() {

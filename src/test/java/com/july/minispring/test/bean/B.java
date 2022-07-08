@@ -1,9 +1,11 @@
 package com.july.minispring.test.bean;
 
 
-import com.july.minispring.beans.factory.annotation.Autowired;
-
 public class B {
+
+	public B() {
+		System.out.println("-----执行B的构造方法-----");
+	}
 
 	private A a;
 

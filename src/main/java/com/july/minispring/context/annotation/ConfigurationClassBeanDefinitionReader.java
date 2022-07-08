@@ -41,7 +41,6 @@ public class ConfigurationClassBeanDefinitionReader {
     }
 
     private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
-        ConfigurationClass configClass = beanMethod.getConfigurationClass();
         MethodMetadata metadata = beanMethod.getMetadata();
         //获取方法名
         String methodName = metadata.getMethodName();

@@ -75,6 +75,9 @@ class ConfigurationClassParser {
             for (Class<?> newClazz : classes) {
                 if (newClazz.getAnnotation(Configuration.class) != null) {
                     ConfigurationClass configClass = new ConfigurationClass(newClazz, newClazz.getSimpleName());
+                    BeanDefinition beanDef = new BeanDefinition(newClazz);
+                    beanDef.setConfig(true);
+                    this.registry.registerBeanDefinition(newClazz.getName(), beanDef);
                     processConfigurationClass(configClass);
                 }
             }

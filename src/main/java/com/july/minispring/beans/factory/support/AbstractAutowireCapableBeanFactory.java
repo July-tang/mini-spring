@@ -21,6 +21,7 @@ import com.july.minispring.core.convert.ConversionService;
 import sun.reflect.misc.MethodUtil;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
         implements AutowireCapableBeanFactory {
@@ -95,7 +96,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             //执行bean的初始化方法和BeanPostProcessor的前置和后置处理方法
             initializeBean(beanName, bean, beanDefinition);
         } catch (Exception e) {
-            throw new BeansException("Instantiation of bean failed", e);
+            throw new BeansException("Instantiation of " + beanName + " failed", e);
         }
         //注册有销毁方法的bean
         registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
@@ -187,9 +188,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object instantiateUsingFactoryMethod(BeanDefinition beanDefinition) throws Exception {
         BeanMethod beanMethod = beanDefinition.getFactoryMethod();
         ConfigurationClass configClass = beanMethod.getConfigurationClass();
+        //获取对应的配置类增强类
+        Object factoryBean = this.getBean(configClass.getClazz().getName());
         Method method = beanMethod.getMetadata().getIntrospectedMethod();
-        //TODO 实现带实参的bean注解方法
-        return method.invoke(configClass.getClazz().newInstance(), null);
+
+        //获取@bean方法的参数
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Object[] parameter = new Object[parameterTypes.length];
+        for (int i = 0; i < parameter.length; i++) {
+            parameter[i] = this.getBean(parameterTypes[i]);
+        }
+
+        return this.getInstantiationStrategy().instantiate(beanDefinition, this, factoryBean,
+                method, parameter);
     }
 
     /**

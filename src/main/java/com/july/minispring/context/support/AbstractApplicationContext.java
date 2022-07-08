@@ -82,12 +82,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         }
         Map<String, BeanFactoryPostProcessor> beanFactoryPostProcessorMap = beanFactory.getBeansOfType(BeanFactoryPostProcessor.class);
         for (BeanFactoryPostProcessor beanFactoryPostProcessor : beanFactoryPostProcessorMap.values()) {
-            if (beanFactoryPostProcessor instanceof BeanDefinitionRegistryPostProcessor) {
-                ((BeanDefinitionRegistryPostProcessor) beanFactoryPostProcessor).
-                        postProcessBeanDefinitionRegistry((BeanDefinitionRegistry) beanFactory);
-            } else {
-                beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
-            }
+            beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
         }
     }
 
