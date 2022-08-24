@@ -42,6 +42,12 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
         return singletonObject;
     }
 
+    /**
+     * 将bean实例放入一级缓存
+     *
+     * @param beanName
+     * @param singletonObject
+     */
     public void addSingleton(String beanName, Object singletonObject) {
         singletonObjects.put(beanName, singletonObject);
         earlySingletonObjects.remove(beanName);

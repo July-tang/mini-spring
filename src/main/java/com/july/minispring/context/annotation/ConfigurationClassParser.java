@@ -1,6 +1,5 @@
 package com.july.minispring.context.annotation;
 
-import com.july.minispring.beans.BeansException;
 import com.july.minispring.beans.PropertyValue;
 import com.july.minispring.beans.factory.PropertyPlaceholderConfigurer;
 import com.july.minispring.beans.factory.config.BeanDefinition;

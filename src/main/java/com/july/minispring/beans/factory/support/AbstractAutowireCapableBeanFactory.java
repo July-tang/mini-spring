@@ -98,8 +98,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         } catch (Exception e) {
             throw new BeansException("Instantiation of " + beanName + " failed", e);
         }
-        //注册有销毁方法的bean
-        registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
 
         Object exposedObject = bean;
         if (beanDefinition.isSingleton()) {
@@ -107,6 +105,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             exposedObject = getSingleton(beanName);
             addSingleton(beanName, exposedObject);
         }
+        //注册有销毁方法的bean
+        registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
+
         return exposedObject;
     }
 
